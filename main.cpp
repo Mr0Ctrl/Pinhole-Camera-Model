@@ -1,20 +1,59 @@
 #include <iostream>
 
+#include <memory>
 #include <vector>
-#include <cmath>
-#include <Eigen/Dense>
+#include <getopt.h>
 
 #include "CameraModel.hpp"
 #include "OpenCVVisualizer.hpp"
 
 
 
-int main(int argc, char const *argv[])
+int main(int argc, char** argv)
 {
+    std::string engine = "opencv";
+
+    #pragma region Parameter Management
+    
+    
+    static struct option long_options[] = {
+        {"graphic-engine", required_argument, 0, 'g'},
+        {"help",           no_argument,       0, 'h'},
+        {0, 0, 0, 0}
+    };
+
+    int option_index = 0;
+    int c;
+
+    while ((c = getopt_long(argc, argv, "g:h", long_options, &option_index)) != -1) {
+        switch (c) {
+            case 'g':
+                engine = optarg;
+                break;
+            case 'h':
+                std::cout << "Kullanim: ./camera_sim --graphic-engine [opencv/vulkan]\n";
+                return 0;
+            default:
+                break;
+        }
+    }
+
+    #pragma endregion
+
+    std::unique_ptr<Visualizer> vis;
+
+    if (engine == "opencv"){
+        vis = std::make_unique<OpenCVVisualizer>(640,480);
+        std::cout << "Graphic Engine: OpenCV" << std::endl; 
+    }
+    else{
+        vis = std::make_unique<OpenCVVisualizer>(640,480);
+        std::cout << "Graphic Engine: OpenCV" << std::endl; 
+    }
+
     // Camera and Window setup
     double focal_length = 360.0;
     CameraModel cam(focal_length,focal_length,320.0,240.0);
-    OpenCVVisualizer vis(640, 480);
 
     // Cube Definition
     std::vector<Eigen::Vector3d> cubeVertices = {
@@ -53,10 +92,12 @@ int main(int argc, char const *argv[])
         for (const auto& edge : edges) {
             Eigen::Vector2d p1 = cam.project(cubeVertices[edge.first], R_world_to_cam, t);
             Eigen::Vector2d p2 = cam.project(cubeVertices[edge.second], R_world_to_cam, t);
-            vis.renderLine(p1, p2);
+            vis->renderLine(p1, p2);
+            vis->renderPoint(p1);
+            vis->renderPoint(p2);
         }
 
-        vis.show();
+        vis->show();
 
         angle += 0.03; 
         if (cv::waitKey(30) == 27) break;

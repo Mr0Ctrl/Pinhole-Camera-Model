@@ -13,7 +13,7 @@ public:
     }
 
     void renderPoint(const Eigen::Vector2d& pixel) override {
-        cv::circle(canvas,cv::Point(pixel.x(),pixel.y()),3,cv::Scalar(0,255,0),-1);
+        cv::circle(canvas,cv::Point(pixel.x(),pixel.y()),3,cv::Scalar(0,0,255),-1);
     }
     
     
