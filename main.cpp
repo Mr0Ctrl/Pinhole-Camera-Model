@@ -66,48 +66,39 @@ int main(int argc, char** argv)
 
     double angle = 0.0;
     double radius = 2.5;
+    Eigen::Vector3d target(0, 0, 0);
 
     while (true) {
         
-        //Camera Circular Rotation
         Eigen::Vector3d camera_pos_world(
-            radius * std::cos(angle), 
-            radius * std::sin(angle), 
-            0.0 
+        radius * std::cos(angle), 
+        radius * std::sin(angle), 
+        0.5 // Biraz yukarıdan bakması derinlik algısını artırır
         );
 
-        //Camera Look At
-        Eigen::Vector3d target(0, 0, 0);
-        
-        Eigen::Vector3d world_up(0, 0, 1);
+        // 2. Kamerayı Güncelle
+        // Sınıfın içine taşıdığımız mantık sayesinde sadece konum verip "şuraya bak" diyoruz.
+        cam.setWorldPosition(camera_pos_world);
+        cam.lookAt(target); // Varsayılan olarak world_up (0,0,1) kullanır
 
-        // Camera Look Vector
-        Eigen::Vector3d cForward = (target - camera_pos_world).normalized();
-        
-        Eigen::Vector3d cRight = world_up.cross(cForward).normalized();
-        Eigen::Vector3d cUpward = cRight.cross(cForward).normalized();
-
-        // World Camera Rotation Matrix
-        Eigen::Matrix3d R_world_to_cam;
-        R_world_to_cam.row(0) = cRight; 
-        R_world_to_cam.row(1) = cUpward; 
-        R_world_to_cam.row(2) = cForward;
-
-        Eigen::Vector3d view_translation = -R_world_to_cam * camera_pos_world;
-
-        // Drawing Loop
+        // 3. Çizim Döngüsü
         for (const auto& edge : mesh.edges) {
-            CameraModel::ProjectionResult p1 = cam.project(mesh.vertices[edge.first]);
-            CameraModel::ProjectionResult p2 = cam.project(mesh.vertices[edge.second]);
-            vis->renderLine(p1.pixel, p2.pixel);
+            // Projeksiyon artık R ve t'yi içeriden otomatik kullanıyor
+            auto p1 = cam.project(mesh.vertices[edge.first]);
+            auto p2 = cam.project(mesh.vertices[edge.second]);
+            
+            // Sadece her iki nokta da kameranın önündeyse çiz
+            if (p1.is_visible && p2.is_visible) {
+                // İleride buraya p1.depth kullanarak kalınlık ekleyebiliriz
+                vis->renderLine(p1.pixel, p2.pixel);
+            }
         }
 
-        //Rendering
+        // 4. Rendering ve Animasyon
         vis->show();
 
-        //Animation
-        angle += 0.1; // Animasyon hızı
-        if (cv::waitKey(30) == 27) break; // ESC ile çıkış
+        angle += 0.05; // Daha akıcı bir dönüş için hızı biraz düşürdük
+        if (cv::waitKey(30) == 27) break; 
     }
 
     return 0;
