@@ -13,7 +13,7 @@ This project is a C++ implementation of a 3D-to-2D projection engine. It focuses
 - **Dynamic Orbit**: Real-time camera transformation and perspective simulation.
 
 ## Technical Stack
-- **C++17**: Utilizing `std::unique_ptr` for memory management.
+- **C++17**: Utilizing for memory management.
 - **Eigen3**: Linear algebra operations.
 - **OpenCV**: Visualization backend.
 - **CMake**: Build automation.
