@@ -86,18 +86,23 @@ int main(int argc, char** argv)
             // Projeksiyon artık R ve t'yi içeriden otomatik kullanıyor
             auto p1 = cam.project(mesh.vertices[edge.first]);
             auto p2 = cam.project(mesh.vertices[edge.second]);
-            
+
             // Sadece her iki nokta da kameranın önündeyse çiz
             if (p1.is_visible && p2.is_visible) {
                 // İleride buraya p1.depth kullanarak kalınlık ekleyebiliriz
-                vis->renderLine(p1.pixel, p2.pixel);
+                int thickness = static_cast<int>(50 / pow((p1.depth+p2.depth),2)); 
+                if (thickness < 1) thickness = 1;
+
+                vis->renderPoint(p1.pixel,thickness);
+                vis->renderPoint(p2.pixel,thickness);
+                vis->renderLine(p1.pixel, p2.pixel, thickness);
             }
         }
 
         // 4. Rendering ve Animasyon
         vis->show();
 
-        angle += 0.05; // Daha akıcı bir dönüş için hızı biraz düşürdük
+        angle += 0.02; // Daha akıcı bir dönüş için hızı biraz düşürdük
         if (cv::waitKey(30) == 27) break; 
     }
 

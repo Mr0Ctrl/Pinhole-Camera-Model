@@ -12,13 +12,13 @@ public:
         window_name = "Pinhole Camera Similation";
     }
 
-    void renderPoint(const Eigen::Vector2d& pixel) override {
-        cv::circle(canvas,cv::Point(pixel.x(),pixel.y()),3,cv::Scalar(0,0,255),-1);
+    void renderPoint(const Eigen::Vector2d& pixel , int thickness) override {
+        cv::circle(canvas,cv::Point(pixel.x(),pixel.y()),thickness,cv::Scalar(0,0,255),-1);
     }
     
     
-    void renderLine( const Eigen::Vector2d& p1, const Eigen::Vector2d& p2) override {
-        cv::line(canvas, cv::Point(p1.x(),p1.y()),cv::Point(p2.x(),p2.y()),cv::Scalar(0,255,0),1);
+    void renderLine( const Eigen::Vector2d& p1, const Eigen::Vector2d& p2, int thickness) override {
+        cv::line(canvas, cv::Point(p1.x(),p1.y()),cv::Point(p2.x(),p2.y()),cv::Scalar(0,255,0),thickness);
 
     }
 
