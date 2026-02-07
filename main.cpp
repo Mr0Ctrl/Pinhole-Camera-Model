@@ -6,6 +6,7 @@
 
 #include "CameraModel.hpp"
 #include "OpenCVVisualizer.hpp"
+#include "MeshLoader.hpp"
 
 
 
@@ -43,64 +44,71 @@ int main(int argc, char** argv)
     std::unique_ptr<Visualizer> vis;
 
     if (engine == "opencv"){
-        vis = std::make_unique<OpenCVVisualizer>(640,480);
+        vis = std::make_unique<OpenCVVisualizer>(800,450);
         std::cout << "Graphic Engine: OpenCV" << std::endl; 
     }
     else{
-        vis = std::make_unique<OpenCVVisualizer>(640,480);
+        vis = std::make_unique<OpenCVVisualizer>(800,450);
         std::cout << "Graphic Engine: OpenCV" << std::endl; 
     }
 
     // Camera and Window setup
-    double focal_length = 360.0;
-    CameraModel cam(focal_length,focal_length,320.0,240.0);
+    double focal_length = 320.0;
+    CameraModel cam(focal_length,focal_length,400.0,225.0);
 
-    // Cube Definition
-    std::vector<Eigen::Vector3d> cubeVertices = {
-        {-0.5, -0.5, -0.5}, {0.5, -0.5, -0.5}, {0.5, 0.5, -0.5}, {-0.5, 0.5, -0.5},
-        {-0.5, -0.5, 0.5}, {0.5, -0.5, 0.5}, {0.5, 0.5, 0.5}, {-0.5, 0.5, 0.5}
-    };
+    // 3D Model Load
+    MeshLoader::MeshData mesh = MeshLoader::loadMesh("susane.obj");
 
-    std::vector<std::pair<int, int>> edges = {
-        {0,1}, {1,2}, {2,3}, {3,0},
-        {4,5}, {5,6}, {6,7}, {7,4},  
-        {0,4}, {1,5}, {2,6}, {3,7}   
-    };
-    
+    if (mesh.vertices.empty()) {
+        std::cerr << "Model Load Error" << std::endl;
+        return 1;
+    }
+
     double angle = 0.0;
-    double radius = 2.0;
+    double radius = 2.5;
 
     while (true) {
-        // 3. Kamerayı Küp Etrafında Döndür (Orbit)
-        // Kameranın dünyadaki konumu (X-Z düzleminde daire çiziyor)
-        double camX = radius * std::sin(angle);
-        double camZ = radius * std::cos(angle);
         
-        Eigen::Vector3d camera_pos_world(camX, 0, camZ);
+        //Camera Circular Rotation
+        Eigen::Vector3d camera_pos_world(
+            radius * std::cos(angle), 
+            radius * std::sin(angle), 
+            0.0 
+        );
 
-        // 4. Rotasyon Matrisi (Kamerayı merkeze bakacak şekilde döndür)
-        // Basitlik için sadece Y ekseninde döndürüyoruz
+        //Camera Look At
+        Eigen::Vector3d target(0, 0, 0);
+        
+        Eigen::Vector3d world_up(0, 0, 1);
+
+        // Camera Look Vector
+        Eigen::Vector3d cForward = (target - camera_pos_world).normalized();
+        
+        Eigen::Vector3d cRight = world_up.cross(cForward).normalized();
+        Eigen::Vector3d cUpward = cRight.cross(cForward).normalized();
+
+        // World Camera Rotation Matrix
         Eigen::Matrix3d R_world_to_cam;
-        R_world_to_cam = Eigen::AngleAxisd(-angle, Eigen::Vector3d::UnitY());
+        R_world_to_cam.row(0) = cRight; 
+        R_world_to_cam.row(1) = cUpward; 
+        R_world_to_cam.row(2) = cForward;
 
-        // Dışsal Parametreler (Extrinsics):
-        // P_cam = R * (P_world - camera_pos_world)
-        // Bu yüzden t = -R * camera_pos_world olur.
-        Eigen::Vector3d t = -R_world_to_cam * camera_pos_world;
+        Eigen::Vector3d view_translation = -R_world_to_cam * camera_pos_world;
 
-        // 5. Çizim
-        for (const auto& edge : edges) {
-            Eigen::Vector2d p1 = cam.project(cubeVertices[edge.first], R_world_to_cam, t);
-            Eigen::Vector2d p2 = cam.project(cubeVertices[edge.second], R_world_to_cam, t);
+        // Drawing Loop
+        for (const auto& edge : mesh.edges) {
+            Eigen::Vector2d p1 = cam.project(mesh.vertices[edge.first], R_world_to_cam, view_translation);
+            Eigen::Vector2d p2 = cam.project(mesh.vertices[edge.second], R_world_to_cam, view_translation);
+            
             vis->renderLine(p1, p2);
-            vis->renderPoint(p1);
-            vis->renderPoint(p2);
         }
 
+        //Rendering
         vis->show();
 
-        angle += 0.03; 
-        if (cv::waitKey(30) == 27) break;
+        //Animation
+        angle += 0.1; // Animasyon hızı
+        if (cv::waitKey(30) == 27) break; // ESC ile çıkış
     }
 
     return 0;
