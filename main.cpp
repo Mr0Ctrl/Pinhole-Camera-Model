@@ -97,10 +97,9 @@ int main(int argc, char** argv)
 
         // Drawing Loop
         for (const auto& edge : mesh.edges) {
-            Eigen::Vector2d p1 = cam.project(mesh.vertices[edge.first], R_world_to_cam, view_translation);
-            Eigen::Vector2d p2 = cam.project(mesh.vertices[edge.second], R_world_to_cam, view_translation);
-            
-            vis->renderLine(p1, p2);
+            CameraModel::ProjectionResult p1 = cam.project(mesh.vertices[edge.first]);
+            CameraModel::ProjectionResult p2 = cam.project(mesh.vertices[edge.second]);
+            vis->renderLine(p1.pixel, p2.pixel);
         }
 
         //Rendering
