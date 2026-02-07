@@ -90,7 +90,7 @@ int main(int argc, char** argv)
             // Sadece her iki nokta da kameranın önündeyse çiz
             if (p1.is_visible && p2.is_visible) {
                 // İleride buraya p1.depth kullanarak kalınlık ekleyebiliriz
-                int thickness = static_cast<int>(50 / pow((p1.depth+p2.depth),2)); 
+                int thickness = static_cast<int>(30 / pow((p1.depth+p2.depth),2)); 
                 if (thickness < 1) thickness = 1;
 
                 vis->renderPoint(p1.pixel,thickness);

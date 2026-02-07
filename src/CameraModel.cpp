@@ -85,7 +85,7 @@ CameraModel::ProjectionResult CameraModel::project(const Eigen::Vector3d& world_
     ProjectionResult res;
     res.depth = p_camera.z(); // Derinlik bilgisi (Kamera Z ekseni)
 
-    // 2. Near-Clipping (Kameranın arkasındaki veya çok yakınındaki noktaları ele)
+    // 2. Near-Clipping
     if (res.depth < 0.1) {
         res.is_visible = false;
         return res;
