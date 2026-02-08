@@ -25,10 +25,7 @@ public:
         double depth;
         bool is_visible;
     };
-
-    // Neden parametreleri azalttık? 
-    // Çünkü artık R ve t sınıfın içinde 'rotation_world_to_view_' 
-    // ve 'translation_world_to_view_' olarak güncel tutuluyor.
+     
     ProjectionResult project(const Eigen::Vector3d& world_point) const;
 
 private:

@@ -30,8 +30,8 @@ cmake .. && make
 
 ## Roadmap
 - [x] Core Pinhole Engine & OpenCV Integration (2026-02-06)
-- [x] 3D Model Loading (Assimp integration for .obj/.fbx) (2026-02-07)
-- [ ] Manual Orbit Control (Interactive camera movement)
+- [x] 3D Model Loading (Assimp integration for .obj/.fbx)  (2026-02-07)
+- [x] Manual Orbit Control (Interactive camera movement)  (2026-02-08)
 - [ ] Basic Shading (Face and light calculations)
 - [ ] Alternative Renderers (OpenGL/Vulkan implementations)
 
