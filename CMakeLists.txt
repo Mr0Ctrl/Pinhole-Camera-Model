@@ -13,7 +13,7 @@ find_package(assimp REQUIRED)
 include_directories(include ${EIGEN3_INCLUDE_DIR} ${OpenCV_INCLUDE_DIRS})
 
 # Çalıştırılabilir dosyayı oluştur
-add_executable(Pinhole-Camera-Model main.cpp src/CameraModel.cpp src/MeshLoader.cpp)
+add_executable(Pinhole-Camera-Model main.cpp src/CameraModel.cpp src/MeshLoader.cpp src/Renderer.cpp)
 
 # Kütüphaneleri bağla
 target_link_libraries(Pinhole-Camera-Model ${OpenCV_LIBRARIES} Eigen3::Eigen)
