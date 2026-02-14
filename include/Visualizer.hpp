@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include <opencv2/opencv.hpp>
 
 class Visualizer {
 public:
@@ -17,8 +18,12 @@ public:
 
     virtual ~Visualizer() = default;
 
-    virtual void renderPoint(const Eigen::Vector2d& pixel, int thickness) = 0;
-    virtual void renderLine(const Eigen::Vector2d& p1, const Eigen::Vector2d& p2, int thickness) = 0;
+    virtual void renderPoint (const Eigen::Vector2d& pixel, int thickness) = 0;
+    virtual void renderLine (const Eigen::Vector2d& p1, const Eigen::Vector2d& p2, int thickness) = 0;
+    virtual void renderTriangle (const Eigen::Vector2d& p1, 
+                            const Eigen::Vector2d& p2, 
+                            const Eigen::Vector2d& p3, 
+                            const cv::Scalar& color) = 0;
     
     virtual void clear() = 0;
     virtual void show() = 0;

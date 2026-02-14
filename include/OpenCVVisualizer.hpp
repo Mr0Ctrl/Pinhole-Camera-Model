@@ -48,6 +48,15 @@ public: // <-- PUBLIC ETİKETİ onMouse DIŞINDA OLMALI
         cv::line(canvas, cv::Point(p1.x(), p1.y()), cv::Point(p2.x(), p2.y()), cv::Scalar(0, 255, 0), thickness);
     }
 
+    void renderTriangle (const Eigen::Vector2d& p1, const Eigen::Vector2d& p2, const Eigen::Vector2d& p3, const cv::Scalar& color) override {
+        cv::Point pts[3];
+        pts[0] = cv::Point(p1.x(), p1.y());
+        pts[1] = cv::Point(p2.x(), p2.y());
+        pts[2] = cv::Point(p3.x(), p3.y());
+
+        cv::fillConvexPoly(canvas, pts, 3, color);
+    }
+
     void show() override {
         cv::imshow(window_name, canvas);
         cv::waitKey(1); 
