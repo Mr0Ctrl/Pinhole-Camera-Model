@@ -7,6 +7,7 @@
 #include "CameraModel.hpp"
 #include "OpenCVVisualizer.hpp"
 #include "MeshLoader.hpp"
+#include "OrbitController.hpp"
 
 
 
@@ -64,41 +65,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    double radius = 2.5;
-    double yaw = 0.0;   // Yatay dönme
-    double pitch = 0.0; // Dikey bakış açısı (0 = tam karşı, PI/2 = tam tepeden)
-    Eigen::Vector3d target(0, 0, 0); // Kameranın baktığı merkez nokta
+    OrbitController controller(2, 0.0, 0.5);
 
     while (true) {
         auto mouse = vis->getMouseState();
 
-        // A. Zoom Kontrolü (Tekerlek)
-        if (false) {
-            radius -= mouse.wheel * 0.001; // Hassasiyet ayarı
-            if (radius < 0.5) radius = 0.5; // Kameranın hedefin içine girmesini engelle
-        }
-
-        // B. Orbit Kontrolü (Orta Tuş + Mouse Delta)
-        if (mouse.middle_button) {
-            // dx ve dy Visualizer'dan delta olarak geliyor
-            yaw += mouse.dx * 0.005;   // Hassasiyet katsayısı
-            pitch += mouse.dy * 0.005;
-
-            // Pitch Sınırlandırması (Kameranın takla atıp görüntünün ters dönmemesi için)
-            const double epsilon = 0.01;
-            if (pitch > M_PI/2 - epsilon) pitch = M_PI/2 - epsilon;
-            if (pitch < -M_PI/2 + epsilon) pitch = -M_PI/2 + epsilon;
-        }
-
-        // C. Küresel Koordinatlardan Dünya Pozisyonuna Hesaplama
-        double camX = radius * std::cos(pitch) * std::cos(yaw);
-        double camY = radius * std::cos(pitch) * std::sin(yaw);
-        double camZ = radius * std::sin(pitch);
-
-        // D. Kamerayı Güncelle
-        cam.setWorldPosition(Eigen::Vector3d(camX, camY, camZ));
-        cam.lookAt(target); // lookAt fonksiyonun rotation_world_to_view_ matrisini içeride güncelliyor
-
+        controller.update(cam, mouse);
+        
         // 3. Çizim Döngüsü
         for (const auto& edge : mesh.edges) {
             // Projeksiyon artık R ve t'yi içeriden otomatik kullanıyor
