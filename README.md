@@ -19,7 +19,11 @@ This project is a C++ implementation of a 3D-to-2D projection engine. It focuses
 - **CMake**: Build automation.
 
 ## Simulation Preview
-![Pinhole Camera Model Preview](media/demo_orbit.gif)
+Orbit Previev (2026-02-08)
+![Orbit Preview](media/demo_orbit.gif)
+
+Render Preview (2026-02-14)
+![Render Preview](media/demo_renderer.png)
 
 ## Usage
 ```bash
@@ -32,7 +36,8 @@ cmake .. && make
 - [x] Core Pinhole Engine & OpenCV Integration (2026-02-06)
 - [x] 3D Model Loading (Assimp integration for .obj/.fbx)  (2026-02-07)
 - [x] Manual Orbit Control (Interactive camera movement)  (2026-02-08)
-- [ ] Basic Shading (Face and light calculations)
+- [x] Basic Shading (Face and light calculations) (2026-02-14)
+- [ ] Performance Improvements
 - [ ] Alternative Renderers (OpenGL/Vulkan implementations)
 
 ## License
