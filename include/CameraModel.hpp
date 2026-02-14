@@ -13,7 +13,11 @@ public:
 
     // --- Extrinsics (Duruş) Setters ---
     void setWorldPosition(const Eigen::Vector3d& position);
+    const Eigen::Vector3d& getWorldPosition();
+
     void setWorldRotation(const Eigen::Matrix3d& rotation_matrix);
+
+  
 
     // --- Bakış Kontrolü ---
     void lookAt(const Eigen::Vector3d& target, const Eigen::Vector3d& world_up = Eigen::Vector3d(0, 0, 1));

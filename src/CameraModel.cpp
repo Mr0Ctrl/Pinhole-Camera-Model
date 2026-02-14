@@ -35,6 +35,10 @@ void CameraModel::setWorldPosition(const Eigen::Vector3d& position) {
     updateExtrinsics();
 }
 
+const Eigen::Vector3d& CameraModel::getWorldPosition() {
+    return camera_position_;
+}
+
 void CameraModel::setWorldRotation(const Eigen::Matrix3d& rotation_matrix) {
     camera_rotation_ = rotation_matrix;
     updateExtrinsics();
